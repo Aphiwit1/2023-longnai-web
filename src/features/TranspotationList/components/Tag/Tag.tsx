@@ -1,7 +1,7 @@
 import { RapidTransitThemeType } from "../../../../interfaces/enum"
 
 
-export const Tag = ({ detail, distance }: any) => {
+export const Tag = ({ detail, distance, index }: any) => {
 
     const changeTypeToName = (type: number) => {
         switch (type) {
@@ -55,6 +55,8 @@ export const Tag = ({ detail, distance }: any) => {
         }
     }
 
+    
+
     const distanceFormatter = (distance: any) => {
         const dist = distance.toFixed(2)
         if (dist > 1 && dist <= 100) {
@@ -66,16 +68,23 @@ export const Tag = ({ detail, distance }: any) => {
         }
     }
 
+ 
+
     const transitType = changeTypeToName(detail.type)
     const distanceKilomester = distanceFormatter(detail.distance)
     const bgTheme = transitBgThemeFunc(detail.type)
     const borderTheme = transitBorderThemeFunc(detail.type)
-
+    const nearestStyle = index == 0 ? `shadow-xl rounded-tl-none ${borderTheme}  ` : ''
 
 
 
     return (
-        <section className={`flex bg-whte border-2  min-w-[300px] max-w-[800px]  justify-between gap-x-5 p-3 rounded-xl`}>
+        <section className={`  relative flex bg-whte border-2  min-w-[300px] max-w-[800px]  justify-between gap-x-5 p-3 rounded-xl ${nearestStyle}`}>
+            
+            {index === 0 &&   <div className={`absolute top-[-24px] text-center left-[-2px] rounded-t-md  p-1 min-w-[80px] text-xs text-white ${bgTheme}`}>
+                ใกล้ที่สุด
+            </div>}
+          
             <div className='flex flex-col w-full gap-y-2'>
                 <div className='flex gap-x-4 justify-between'>
                     <div className={`${bgTheme} text-white text-xs flex justify-center items-center  px-3 py-1 rounded-xl min-w-[60px]`}>{transitType}</div>

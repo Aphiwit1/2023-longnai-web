@@ -211,17 +211,19 @@ const YourComponent = () => {
           {placePredictions.map((item) => renderItem(item))}
         </div>
 
-        <div className=" flex justify-center gap-2 flex-wrap p-2">
-          <button className="border-2 border-slate-700 text-slate-700  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(0)}>แสดงทั้งหมด</button>
-          <button className="border-2 border-[#74AD46] text-[#74AD46]   opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(1)}>BTS</button>
-          <button className="border-2 border-[#325C35] text-[#325C35]  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(2)}>BTS</button>
-          <button className="border-2 border-[#365EA1] text-[#365EA1]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(3)}>MRT</button>
-          <button className="border-2 border-[#65327C] text-[#65327C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(4)}>MRT</button>
-          <button className="border-2 border-[#E75656] text-[#E75656]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(5)}>ARL</button>
-          <button className="border-2 border-[#CD9934] text-[#CD9934]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(6)}>BTS</button>
-          <button className="border-2 border-[#F60723] text-[#F60723]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(7)}>SRTET</button>
-          <button className="border-2 border-[#D76A6C] text-[#D76A6C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(8)}>SRT</button>
-        </div>
+        {stationList && (
+          <div className=" flex justify-center gap-2 flex-wrap p-2 mb-10">
+            <button className="border-2 border-slate-700 text-slate-700  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(0)}>แสดงทั้งหมด</button>
+            <button className="border-2 border-[#74AD46] text-[#74AD46]   opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(1)}>BTS</button>
+            <button className="border-2 border-[#325C35] text-[#325C35]  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(2)}>BTS</button>
+            <button className="border-2 border-[#365EA1] text-[#365EA1]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(3)}>MRT</button>
+            <button className="border-2 border-[#65327C] text-[#65327C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(4)}>MRT</button>
+            <button className="border-2 border-[#E75656] text-[#E75656]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(5)}>ARL</button>
+            <button className="border-2 border-[#CD9934] text-[#CD9934]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(6)}>BTS</button>
+            <button className="border-2 border-[#F60723] text-[#F60723]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(7)}>SRTET</button>
+            <button className="border-2 border-[#D76A6C] text-[#D76A6C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(8)}>SRT</button>
+          </div>
+        )}
 
         {/* <SuggestDestination /> */}
 
@@ -231,8 +233,8 @@ const YourComponent = () => {
 
         {minDistance !== null && (
           <section className="flex  gap-2 sm:gap-5 flex-wrap justify-center">
-            {stationList && stationList.map((item) => (
-              <Tag detail={item} distance={minDistance} />
+            {stationList && stationList.map((item, index: number) => (
+              <Tag detail={item} distance={minDistance}  index={index}/>
             ))}
 
           </section>
