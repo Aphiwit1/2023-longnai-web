@@ -1,12 +1,21 @@
 import React from 'react'
 
-export const AppLAyout = () => {
+export const AppLayout = ({ children }: any) => {
     return (
         <>
-            <nav className="bg-slate-800 h-[70px] m-5 rounded-xl border-gray-200 max-w-[800px] mx-auto mb-10">
-                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <section className=" h-screen ">
+                <nav className=" h-[70px]  border-2 border-b-gray-200 px-[50px] mx-auto mb-10 flex justify-center items-center">
+                </nav>
+                
+                <div className=' p-5 mb-10'>
+                    {children}
                 </div>
-            </nav>
+
+                <footer className="h-[70px] border-2 border-t-gray-200 px-[50px] mx-auto mb-10 flex justify-center items-center">
+                        Footer
+                 </footer>
+            </section>
+
         </>
     )
 }

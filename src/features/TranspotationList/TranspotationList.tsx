@@ -3,6 +3,20 @@ import usePlacesService from 'react-google-autocomplete/lib/usePlacesAutocomplet
 import { KEY, SKYTRAIN_LOCATIONS } from './key';
 import { Tag } from './components/Tag/Tag';
 import { SuggestDestination } from './components/SuggestDestination/SuggestDestination';
+import { NotFound } from './components/NotFound/NotFound';
+
+interface Station {
+  distance: number;
+  id: string;
+  name_th: string;
+  name_en: string;
+  type: number;
+  type_name: string;
+  have_parking: number;
+  lat: number;
+  long: number;
+}
+
 
 const YourComponent = () => {
   const {
@@ -12,12 +26,17 @@ const YourComponent = () => {
     isPlacePredictionsLoading,
   } = usePlacesService({
     apiKey: KEY,
+    options: {
+      componentRestrictions: {
+        country: 'TH'
+      },
+    },
   });
 
 
 
-  const [minDistance, setMinDistance] = useState(null);
-  const [minDistanceTypeName, setMinDistanceTypeName] = useState(null);
+  const [minDistance, setMinDistance] = useState<number | null>(null);
+  const [minDistanceTypeName, setMinDistanceTypeName] = useState<string | null>(null);
   const [minPlaceDescription, setMinPlaceDescription] = useState({
     id: '',
     name_th: '',
@@ -28,6 +47,14 @@ const YourComponent = () => {
     lat: 0,
     long: 0,
   })
+  const [searchValue, setSearchValue] = useState('')
+
+
+  const [stationList, setStationList] = useState<Station[]>([]);
+
+  const [filterbyType, setFilterbyType] = useState<number>(0);
+
+
 
   useEffect(() => {
     // Fetch place details for the first element in placePredictions array
@@ -39,7 +66,17 @@ const YourComponent = () => {
         (placeDetails: any) => savePlaceDetailsToState(placeDetails) // Implement this function
       );
     }
-  }, [placePredictions]);
+  }, [placePredictions, filterbyType]);
+
+  useEffect(() => {
+    // This effect will run whenever searchValue changes
+
+    // Call the debounced function here
+    debouncedGetPlacePredictions({ input: searchValue });
+
+    // You can also add any other actions you want to perform here
+
+  }, [searchValue]); // Set searchValue as the dependency
 
   // Implement a debounce function
   const debounce = (func: any, delay: any) => {
@@ -60,28 +97,47 @@ const YourComponent = () => {
     const lat2 = placeDetails.geometry.location.lat();
     const long2 = placeDetails.geometry.location.lng();
 
-    // Calculate the distances to Skytrain locations and find the minimum
-    let minDist: any = null;
-    let minDistTypeName = null;
+    // Calculate the distances to Skytrain locations and store them in an array
 
-    SKYTRAIN_LOCATIONS.forEach((location) => {
-      const lat1 = location.lat;
-      const long1 = location.long;
-      const distance = calculateDistance(lat1, long1, lat2, long2);
-      if (minDist === null || distance < minDist) {
-        minDist = distance;
-        minDistTypeName = location.name_th;
-        setMinPlaceDescription(location)
-      }
-    });
+    let distances: any
 
-    setMinDistance(minDist);
-    setMinDistanceTypeName(minDistTypeName);
+    if (filterbyType == 0) {
+      distances = SKYTRAIN_LOCATIONS.map((location) => {
+        const lat1 = location.lat;
+        const long1 = location.long;
+        const distance = calculateDistance(lat1, long1, lat2, long2);
+        return { ...location, distance };
+      });
+    } else if (filterbyType > 0) {
+      distances = SKYTRAIN_LOCATIONS.filter((location) => {
+        return location.type == filterbyType
+      }).map((location) => {
+        const lat1 = location.lat;
+        const long1 = location.long;
+        const distance = calculateDistance(lat1, long1, lat2, long2);
+        return { ...location, distance };
+      });
+    }
+
+
+    console.log(distances)
+
+    // Sort the distances array by distance (minDist to maxDist)
+    distances.sort((a: any, b: any) => a.distance - b.distance);
+
+    // Update the state with the sorted distances
+    if (distances.length > 0) {
+      const nearestLocation = distances[0];
+      setMinDistance(nearestLocation.distance);
+      setMinDistanceTypeName(nearestLocation.name_th);
+      setMinPlaceDescription(nearestLocation);
+      setStationList(distances)
+    }
   };
 
   const renderItem = (item: any) => {
     // Implement your rendering logic for each prediction item
-    return item && <SuggestDestination key={item.place_id} text={item.description} />;
+    return item.description && <SuggestDestination key={item.place_id} text={item.description} getValueSuggestion={getValueSuggestion} />;
   };
 
   const calculateDistance = (lat1: any, lon1: any, lat2: any, lon2: any) => {
@@ -106,13 +162,37 @@ const YourComponent = () => {
     return distance;
   };
 
+  const getValueSuggestion = (text: string) => {
+    setSearchValue(text)
+    console.log(searchValue)
+  }
+
   return (
     <>
       {/* Input for autocomplete */}
-      <section className='px-5 max-w-[1000px] mx-auto'>
+      <section className='max-w-[1000px] mx-auto'>
+        <h1 className="text-center font-semibold text-2xl sm:text-5xl mb-10 text-slate-800">
+
+          <div className="mb-2 sm:mb-5">
+            ค้นหา <span className="text-orange-500">สถานีรถไฟฟ้าที่ใกล้ที่สุด</span>
+          </div>
+
+          <div>
+            จากสถานที่ ที่คุณต้องการ
+          </div>
+
+        </h1>
+
         <section className=" mx-auto mb-3">
-          <input type="text" id="large-input" className=" drop-shadow-sm rounded-xl block w-full p-4 text-gray-900 border border-gray-200  sm:text-md"
+          <input
+            type="text"
+            id="large-input"
+            className="drop-shadow-sm rounded-xl block w-full p-4 text-gray-900 border border-gray-200 sm:text-md"
+            value={searchValue} // Bind input value to the searchValue state
             onChange={(evt) => {
+              // Update the searchValue state when the input changes
+              setSearchValue(evt.target.value);
+
               // Call the debounced function here
               debouncedGetPlacePredictions({ input: evt.target.value });
             }}
@@ -124,19 +204,37 @@ const YourComponent = () => {
         {/* Loading indicator */}
         {isPlacePredictionsLoading && <div>Loading...</div>}
 
+
+
         {/* Render prediction items */}
-        {placePredictions.map((item) => renderItem(item))}
-        <SuggestDestination />
+        <div className="mb-5">
+          {placePredictions.map((item) => renderItem(item))}
+        </div>
+
+        <div className=" flex justify-center gap-2 flex-wrap p-2">
+          <button className="border-2 border-slate-700 text-slate-700  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(0)}>แสดงทั้งหมด</button>
+          <button className="border-2 border-[#74AD46] text-[#74AD46]   opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(1)}>BTS</button>
+          <button className="border-2 border-[#325C35] text-[#325C35]  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(2)}>BTS</button>
+          <button className="border-2 border-[#365EA1] text-[#365EA1]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(3)}>MRT</button>
+          <button className="border-2 border-[#65327C] text-[#65327C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(4)}>MRT</button>
+          <button className="border-2 border-[#E75656] text-[#E75656]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(5)}>ARL</button>
+          <button className="border-2 border-[#CD9934] text-[#CD9934]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(6)}>BTS</button>
+          <button className="border-2 border-[#F60723] text-[#F60723]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(7)}>SRTET</button>
+          <button className="border-2 border-[#D76A6C] text-[#D76A6C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(8)}>SRT</button>
+        </div>
+
+        {/* <SuggestDestination /> */}
 
         {/* Display the minimum distance and type name */}
-        {!minDistance && (
-          <div>
-            NOT FOUND
-          </div>
-        )}
+
+        {!minDistance && <NotFound />}
+
         {minDistance !== null && (
-          <section className="flex gap-2 flex-wrap justify-center">
-            <Tag detail={minPlaceDescription} distance={minDistance} />
+          <section className="flex  gap-2 sm:gap-5 flex-wrap justify-center">
+            {stationList && stationList.map((item) => (
+              <Tag detail={item} distance={minDistance} />
+            ))}
+
           </section>
         )}
       </section>
