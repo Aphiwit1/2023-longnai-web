@@ -1,7 +1,7 @@
 import { RapidTransitThemeType } from "../../../../interfaces/enum"
 
 
-export const Tag = ({ detail, distance, index }: any) => {
+export const Tag = ({ detail, index }: any) => {
 
     const changeTypeToName = (type: number) => {
         switch (type) {

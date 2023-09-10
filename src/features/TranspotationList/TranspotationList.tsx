@@ -36,17 +36,7 @@ const YourComponent = () => {
 
 
   const [minDistance, setMinDistance] = useState<number | null>(null);
-  const [minDistanceTypeName, setMinDistanceTypeName] = useState<string | null>(null);
-  const [minPlaceDescription, setMinPlaceDescription] = useState({
-    id: '',
-    name_th: '',
-    name_en: '',
-    type: 0,
-    type_name: '',
-    have_parking: 0,
-    lat: 0,
-    long: 0,
-  })
+
   const [searchValue, setSearchValue] = useState('')
 
 
@@ -129,8 +119,6 @@ const YourComponent = () => {
     if (distances.length > 0) {
       const nearestLocation = distances[0];
       setMinDistance(nearestLocation.distance);
-      setMinDistanceTypeName(nearestLocation.name_th);
-      setMinPlaceDescription(nearestLocation);
       setStationList(distances)
     }
   };

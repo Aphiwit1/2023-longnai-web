@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 export const SuggestDestination = ({ text, key, getValueSuggestion }: any) => {
     const handleClick = (event:any) => {

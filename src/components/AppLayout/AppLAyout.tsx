@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 export const AppLayout = ({ children }: any) => {
     return (
@@ -7,7 +7,7 @@ export const AppLayout = ({ children }: any) => {
                 <nav className=" h-[70px]  border-2 border-b-gray-200 px-[50px] mx-auto mb-10 flex justify-center items-center">
                 </nav>
                 
-                <div className=' p-5 mb-10'>
+                <div className='h-screen p-5 mb-10'>
                     {children}
                 </div>
 
