@@ -7,6 +7,10 @@ import { NotFound } from "../NotFound/NotFound";
 import { FilterType } from "./components/FilterType/FilterType";
 import { Loading } from "../Loading/Loading";
 
+import { FaLocationDot } from "react-icons/fa6";
+import { MdCancel } from "react-icons/md";
+
+
 interface Station {
   distance: number;
   id: string;
@@ -181,11 +185,11 @@ const YourComponent = () => {
           <div>จากสถานที่ ที่คุณต้องการ</div>
         </h1>
 
-        <section className=" mx-auto mb-3">
+        <section className="relative mx-auto mb-3">
           <input
             type="text"
             id="large-input"
-            className="drop-shadow-sm rounded-xl block w-full p-4 text-gray-900 border border-gray-200 sm:text-md"
+            className="drop-shadow-sm rounded-xl block w-full p-4 text-gray-900 border border-gray-200 sm:text-md pr-10"
             value={searchValue} // Bind input value to the searchValue state
             onChange={(evt) => {
               // Update the searchValue state when the input changes
@@ -196,6 +200,20 @@ const YourComponent = () => {
             }}
             placeholder="Find place nearest..."
           />
+          {!minDistance && (
+            <div className="absolute top-4 right-3 text-2xl text-orange-500">
+              <FaLocationDot />
+            </div>
+          )}
+
+          {minDistance && (
+            <div
+              className="absolute top-4 right-3 text-2xl text-slate-800 cursor-pointer"
+              onClick={() => setSearchValue("")}
+            >
+              <MdCancel/>
+            </div>
+          )}
         </section>
 
         {/* Loading indicator */}
@@ -210,12 +228,14 @@ const YourComponent = () => {
           {placePredictions.map((item) => renderItem(item))}
         </div>
 
-        <FilterType
-          filterTypeHandler={handleFilterTypeSelection}
-          currentType={filterbyType}
-        />
+        {minDistance && (
+          <FilterType
+            filterTypeHandler={handleFilterTypeSelection}
+            currentType={filterbyType}
+          />
+        )}
 
-        {/* <SuggestDestination /> */}
+
 
         {/* Display the minimum distance and type name */}
 
