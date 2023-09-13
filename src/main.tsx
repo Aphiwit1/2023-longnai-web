@@ -5,7 +5,7 @@ import './index.css'
 
 import TagManager from 'react-gtm-module'
 
-const longnaiStagingGTM = 'KD629CM2'
+const longnaiStagingGTM = 'GTM-KD629CM2'
  
 const tagManagerArgs = {
     gtmId: longnaiStagingGTM
