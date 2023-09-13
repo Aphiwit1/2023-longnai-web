@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
-import usePlacesService from 'react-google-autocomplete/lib/usePlacesAutocompleteService';
-import { KEY, SKYTRAIN_LOCATIONS } from './key';
-import { Tag } from './components/Tag/Tag';
-import { SuggestDestination } from './components/SuggestDestination/SuggestDestination';
-import { NotFound } from './components/NotFound/NotFound';
+import { useEffect, useState } from "react";
+import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocompleteService";
+import { KEY, SKYTRAIN_LOCATIONS } from "./key";
+import { Tag } from "./components/Tag/Tag";
+import { SuggestDestination } from "./components/SuggestDestination/SuggestDestination";
+import { NotFound } from "../NotFound/NotFound";
+import { FilterType } from "./components/FilterType/FilterType";
+import { Loading } from "../Loading/Loading";
 
 interface Station {
   distance: number;
@@ -17,7 +19,6 @@ interface Station {
   long: number;
 }
 
-
 const YourComponent = () => {
   const {
     placesService,
@@ -28,23 +29,18 @@ const YourComponent = () => {
     apiKey: KEY,
     options: {
       componentRestrictions: {
-        country: 'TH'
+        country: "TH",
       },
     },
   });
 
-
-
   const [minDistance, setMinDistance] = useState<number | null>(null);
 
-  const [searchValue, setSearchValue] = useState('')
-
+  const [searchValue, setSearchValue] = useState("");
 
   const [stationList, setStationList] = useState<Station[]>([]);
 
   const [filterbyType, setFilterbyType] = useState<number>(0);
-
-
 
   useEffect(() => {
     // Fetch place details for the first element in placePredictions array
@@ -65,7 +61,6 @@ const YourComponent = () => {
     debouncedGetPlacePredictions({ input: searchValue });
 
     // You can also add any other actions you want to perform here
-
   }, [searchValue]); // Set searchValue as the dependency
 
   // Implement a debounce function
@@ -81,7 +76,6 @@ const YourComponent = () => {
 
   const debouncedGetPlacePredictions = debounce(getPlacePredictions, 1000);
 
-
   const savePlaceDetailsToState = (placeDetails: any) => {
     // Extract latitude and longitude from place details
     const lat2 = placeDetails.geometry.location.lat();
@@ -89,7 +83,7 @@ const YourComponent = () => {
 
     // Calculate the distances to Skytrain locations and store them in an array
 
-    let distances: any
+    let distances: any;
 
     if (filterbyType == 0) {
       distances = SKYTRAIN_LOCATIONS.map((location) => {
@@ -100,7 +94,7 @@ const YourComponent = () => {
       });
     } else if (filterbyType > 0) {
       distances = SKYTRAIN_LOCATIONS.filter((location) => {
-        return location.type == filterbyType
+        return location.type == filterbyType;
       }).map((location) => {
         const lat1 = location.lat;
         const long1 = location.long;
@@ -109,8 +103,7 @@ const YourComponent = () => {
       });
     }
 
-
-    console.log(distances)
+    console.log(distances);
 
     // Sort the distances array by distance (minDist to maxDist)
     distances.sort((a: any, b: any) => a.distance - b.distance);
@@ -119,13 +112,27 @@ const YourComponent = () => {
     if (distances.length > 0) {
       const nearestLocation = distances[0];
       setMinDistance(nearestLocation.distance);
-      setStationList(distances)
+      setStationList(distances);
     }
   };
 
   const renderItem = (item: any) => {
     // Implement your rendering logic for each prediction item
-    return item.description && <SuggestDestination key={item.place_id} text={item.description} getValueSuggestion={getValueSuggestion} />;
+    return (
+      item.description && (
+        <SuggestDestination
+          key={item.place_id}
+          text={item.description}
+          getValueSuggestion={getValueSuggestion}
+        />
+      )
+    );
+  };
+
+  const handleFilterTypeSelection = (selectedType: any) => {
+    // Do something with the selected filter type, e.g., update state
+    console.log("selectedType");
+    setFilterbyType(selectedType);
   };
 
   const calculateDistance = (lat1: any, lon1: any, lat2: any, lon2: any) => {
@@ -151,24 +158,27 @@ const YourComponent = () => {
   };
 
   const getValueSuggestion = (text: string) => {
-    setSearchValue(text)
-    console.log(searchValue)
-  }
+    setSearchValue(text);
+    console.log(searchValue);
+  };
+
+  // const filterTypeHandler = (type:any) => {
+  //   console.log(type)
+  // }
+
+  console.log("station list >>", stationList);
 
   return (
     <>
       {/* Input for autocomplete */}
-      <section className='max-w-[1000px] mx-auto'>
+      <section className="max-w-[1000px] mx-auto">
         <h1 className="text-center font-semibold text-2xl sm:text-5xl mb-10 text-slate-800">
-
           <div className="mb-2 sm:mb-5">
-            ค้นหา <span className="text-orange-500">สถานีรถไฟฟ้าที่ใกล้ที่สุด</span>
+            ค้นหา{" "}
+            <span className="text-orange-500">สถานีรถไฟฟ้าที่ใกล้ที่สุด</span>
           </div>
 
-          <div>
-            จากสถานที่ ที่คุณต้องการ
-          </div>
-
+          <div>จากสถานที่ ที่คุณต้องการ</div>
         </h1>
 
         <section className=" mx-auto mb-3">
@@ -188,30 +198,22 @@ const YourComponent = () => {
           />
         </section>
 
-
         {/* Loading indicator */}
-        {isPlacePredictionsLoading && <div>Loading...</div>}
-
-
+        {isPlacePredictionsLoading && (
+          <>
+            <Loading />
+          </>
+        )}
 
         {/* Render prediction items */}
         <div className="mb-5">
           {placePredictions.map((item) => renderItem(item))}
         </div>
 
-        {stationList && (
-          <div className=" flex justify-center gap-2 flex-wrap p-2 mb-10">
-            <button className="border-2 border-slate-700 text-slate-700  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(0)}>แสดงทั้งหมด</button>
-            <button className="border-2 border-[#74AD46] text-[#74AD46]   opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(1)}>BTS</button>
-            <button className="border-2 border-[#325C35] text-[#325C35]  opacity-100    font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(2)}>BTS</button>
-            <button className="border-2 border-[#365EA1] text-[#365EA1]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(3)}>MRT</button>
-            <button className="border-2 border-[#65327C] text-[#65327C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(4)}>MRT</button>
-            <button className="border-2 border-[#E75656] text-[#E75656]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(5)}>ARL</button>
-            <button className="border-2 border-[#CD9934] text-[#CD9934]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(6)}>BTS</button>
-            <button className="border-2 border-[#F60723] text-[#F60723]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(7)}>SRTET</button>
-            <button className="border-2 border-[#D76A6C] text-[#D76A6C]  opacity-100     font-bold py-2 px-4 rounded-full" onClick={() => setFilterbyType(8)}>SRT</button>
-          </div>
-        )}
+        <FilterType
+          filterTypeHandler={handleFilterTypeSelection}
+          currentType={filterbyType}
+        />
 
         {/* <SuggestDestination /> */}
 
@@ -221,14 +223,13 @@ const YourComponent = () => {
 
         {minDistance !== null && (
           <section className="flex  gap-2 sm:gap-5 flex-wrap justify-center">
-            {stationList && stationList.map((item, index: number) => (
-              <Tag detail={item} distance={minDistance}  index={index}/>
-            ))}
-
+            {stationList &&
+              stationList.map((item, index: number) => (
+                <Tag detail={item} distance={minDistance} index={index} />
+              ))}
           </section>
         )}
       </section>
-
     </>
   );
 };

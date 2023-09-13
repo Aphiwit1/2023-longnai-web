@@ -79,9 +79,9 @@ export const Tag = ({ detail, index }: any) => {
 
 
     return (
-        <section className={`  relative flex bg-whte border-2  min-w-[300px] max-w-[800px]  justify-between gap-x-5 p-3 rounded-xl ${nearestStyle}`}>
+        <section className={`relative flex bg-whte border-2  min-w-[300px] max-w-[800px]  justify-between gap-x-5 p-3 rounded-xl ${nearestStyle}`}>
             
-            {index === 0 &&   <div className={`absolute top-[-24px] text-center left-[-2px] rounded-t-md  p-1 min-w-[80px] text-xs text-white ${bgTheme}`}>
+            {index === 0 &&   <div className={` absolute top-[-24px] text-center left-[-2px] rounded-t-md  p-1 min-w-[80px] text-xs text-white ${bgTheme}`}>
                 ใกล้ที่สุด
             </div>}
           

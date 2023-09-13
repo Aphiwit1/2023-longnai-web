@@ -11,9 +11,9 @@ export const AppLayout = ({ children }: any) => {
                     {children}
                 </div>
 
-                <footer className="h-[70px] border-2 border-t-gray-200 px-[50px] mx-auto mb-10 flex justify-center items-center">
-                        Footer
-                 </footer>
+                {/* <footer className="h-[70px] border-2 border-t-gray-200 px-[50px] mx-auto mb-10 flex justify-center items-center">
+                        
+                 </footer> */}
             </section>
 
         </>

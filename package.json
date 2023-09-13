@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/react-gtm-module": "^2.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-autocomplete": "^2.7.3",
+    "react-gtm-module": "^2.0.11",
     "react-places-autocomplete": "^7.3.0"
   },
   "devDependencies": {
