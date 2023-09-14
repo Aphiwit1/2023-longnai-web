@@ -68,6 +68,12 @@ export const Tag = ({ detail, index }: any) => {
         }
     }
 
+    const nameFormat = (name: string) => {
+        if(name.length > 15) {
+            return 'text-sm text-center'
+        }
+    }
+
  
 
     const transitType = changeTypeToName(detail.type)
@@ -79,7 +85,7 @@ export const Tag = ({ detail, index }: any) => {
 
 
     return (
-        <section className={`relative flex bg-whte border-2  min-w-[300px] max-w-[800px]  justify-between gap-x-5 p-3 rounded-xl ${nearestStyle}`}>
+        <section className={`relative flex bg-whte border-2 items-center  w-full sm:min-w-[300px] sm:max-w-[300px]  justify-between gap-x-5 p-3 rounded-xl ${nearestStyle}`}>
             
             {index === 0 &&   <div className={` absolute top-[-24px] text-center left-[-2px] rounded-t-md  p-1 min-w-[80px] text-xs text-white ${bgTheme}`}>
                 ใกล้ที่สุด
@@ -87,16 +93,16 @@ export const Tag = ({ detail, index }: any) => {
           
             <div className='flex flex-col w-full gap-y-2'>
                 <div className='flex gap-x-4 justify-between'>
-                    <div className={`${bgTheme} text-white text-xs flex justify-center items-center  px-3 py-1 rounded-xl min-w-[60px]`}>{transitType}</div>
-                    <div className="">{detail.name_th}</div>
+                    <div className={`${bgTheme}  text-white text-xs flex justify-center items-center  px-3 py-1 rounded-xl min-w-[60px]`}>{transitType}</div>
+                    <div className={`${nameFormat(detail.name_th)} font-semibold`}>{detail.name_th}</div>
                     <div className="text-right">
                         logo
                     </div>
                 </div>
 
                 <div className="flex gap-x-4  items-center justify-between">
-                    <div className={`${borderTheme} border-2 text-xs flex justify-center items-center  px-3 py-1 rounded-xl min-w-[60px]`}>{detail.id}</div>
-                    <div className=" text-slate-600">{detail.name_en}</div>
+                    <div className={`${borderTheme}  border-2 text-xs flex justify-center items-center  px-3 py-1 rounded-xl min-w-[60px]`}>{detail.id}</div>
+                    <div className={`${nameFormat(detail.name_en)} text-slate-600 `}>{detail.name_en}</div>
                     <div className="text-xs text-right">
                         {distanceKilomester}
                     </div>

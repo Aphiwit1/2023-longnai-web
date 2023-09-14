@@ -39,35 +39,27 @@ const YourComponent = () => {
   });
 
   const [minDistance, setMinDistance] = useState<number | null>(null);
-
   const [searchValue, setSearchValue] = useState("");
-
   const [stationList, setStationList] = useState<Station[]>([]);
-
   const [filterbyType, setFilterbyType] = useState<number>(0);
 
   useEffect(() => {
-    // Fetch place details for the first element in placePredictions array
     if (placePredictions.length) {
+      console.log('placePredictions.length >>', )
       placesService?.getDetails(
         {
           placeId: placePredictions[0].place_id,
         },
         (placeDetails: any) => savePlaceDetailsToState(placeDetails) // Implement this function
       );
-    }
+    } 
+
   }, [placePredictions, filterbyType]);
 
   useEffect(() => {
-    // This effect will run whenever searchValue changes
-
-    // Call the debounced function here
     debouncedGetPlacePredictions({ input: searchValue });
+  }, [searchValue]);
 
-    // You can also add any other actions you want to perform here
-  }, [searchValue]); // Set searchValue as the dependency
-
-  // Implement a debounce function
   const debounce = (func: any, delay: any) => {
     let timeoutId: any;
     return function (...args: any) {
@@ -81,14 +73,10 @@ const YourComponent = () => {
   const debouncedGetPlacePredictions = debounce(getPlacePredictions, 1000);
 
   const savePlaceDetailsToState = (placeDetails: any) => {
-    // Extract latitude and longitude from place details
     const lat2 = placeDetails.geometry.location.lat();
     const long2 = placeDetails.geometry.location.lng();
 
-    // Calculate the distances to Skytrain locations and store them in an array
-
     let distances: any;
-
     if (filterbyType == 0) {
       distances = SKYTRAIN_LOCATIONS.map((location) => {
         const lat1 = location.lat;
@@ -107,12 +95,7 @@ const YourComponent = () => {
       });
     }
 
-    console.log(distances);
-
-    // Sort the distances array by distance (minDist to maxDist)
     distances.sort((a: any, b: any) => a.distance - b.distance);
-
-    // Update the state with the sorted distances
     if (distances.length > 0) {
       const nearestLocation = distances[0];
       setMinDistance(nearestLocation.distance);
@@ -121,7 +104,6 @@ const YourComponent = () => {
   };
 
   const renderItem = (item: any) => {
-    // Implement your rendering logic for each prediction item
     return (
       item.description && (
         <SuggestDestination
@@ -135,7 +117,7 @@ const YourComponent = () => {
 
   const handleFilterTypeSelection = (selectedType: any) => {
     // Do something with the selected filter type, e.g., update state
-    console.log("selectedType");
+    console.log("selectedType ", selectedType);
     setFilterbyType(selectedType);
   };
 
@@ -164,11 +146,8 @@ const YourComponent = () => {
   const getValueSuggestion = (text: string) => {
     setSearchValue(text);
     console.log(searchValue);
+    setFilterbyType(0)
   };
-
-  // const filterTypeHandler = (type:any) => {
-  //   console.log(type)
-  // }
 
   console.log("station list >>", stationList);
 
@@ -200,13 +179,13 @@ const YourComponent = () => {
             }}
             placeholder="Find place nearest..."
           />
-          {!minDistance && (
+          {!minDistance || !searchValue && (
             <div className="absolute top-4 right-3 text-2xl text-orange-500">
               <FaLocationDot />
             </div>
           )}
 
-          {minDistance && (
+          {minDistance && searchValue && (
             <div
               className="absolute top-4 right-3 text-2xl text-slate-800 cursor-pointer"
               onClick={() => setSearchValue("")}
@@ -228,7 +207,7 @@ const YourComponent = () => {
           {placePredictions.map((item) => renderItem(item))}
         </div>
 
-        {minDistance && (
+        {minDistance &&  searchValue && (
           <FilterType
             filterTypeHandler={handleFilterTypeSelection}
             currentType={filterbyType}
@@ -238,13 +217,15 @@ const YourComponent = () => {
 
 
         {/* Display the minimum distance and type name */}
-
         {!minDistance && <NotFound />}
 
-        {minDistance !== null && (
+        {minDistance !== null && searchValue &&  (
           <section className="flex  gap-2 sm:gap-5 flex-wrap justify-center">
             {stationList &&
-              stationList.map((item, index: number) => (
+              stationList.filter((item:any) => {
+                if(filterbyType === 0) return item
+                return item.type === filterbyType
+            }).map((item, index: number) => (
                 <Tag detail={item} distance={minDistance} index={index} />
               ))}
           </section>
