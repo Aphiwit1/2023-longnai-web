@@ -38,6 +38,10 @@ const stationTypeList = [
     typeNo: 8,
     typeName: "SRT",
   },
+  {
+    typeNo: 9,
+    typeName: "MRT",
+  },
 ];
 
 export const FilterType = ({ filterTypeHandler, currentType }: any) => {
@@ -61,6 +65,8 @@ export const FilterType = ({ filterTypeHandler, currentType }: any) => {
         return "border-[#F60723] text-[#F60723] hover:bg-[#F60723]";
       case RapidTransitThemeType.LIGHT_RED:
         return "border-[#D76A6C] text-[#D76A6C] hover:bg-[#D76A6C]";
+        case RapidTransitThemeType.YELLO :
+          return "border-yellow-400 text-yellow-400 hover:bg-yellow-400";
     }
   };
   const btnCurrentTypeThemeFunc = (type: number, index:number) => {
@@ -84,6 +90,8 @@ export const FilterType = ({ filterTypeHandler, currentType }: any) => {
               return "text-white  bg-[#F60723]";
             case RapidTransitThemeType.LIGHT_RED:
               return "text-white  bg-[#D76A6C]";
+              case RapidTransitThemeType.YELLO:
+                return "text-white  bg-yellow-400";
           }
         };
     }

@@ -207,6 +207,9 @@ const YourComponent = () => {
           {placePredictions.map((item) => renderItem(item))}
         </div>
 
+           {/* Display the minimum distance and type name */}
+           {!minDistance &&  !searchValue && <NotFound title="ไม่พบสถานีที่ค้นหา" description="ไม่พบสถานีรถไฟฟ้าในบริเวณที่คุณค้นหา ให้ลองค้นหาสถานที่อื่นๆ หรือตรวจสอบสถานที่หรือระยะทางอีกครั้งเพื่อหาทางที่ใกล้เคียงใหม่!" />}
+
         {minDistance &&  searchValue && (
           <FilterType
             filterTypeHandler={handleFilterTypeSelection}
@@ -216,13 +219,12 @@ const YourComponent = () => {
 
 
 
-        {/* Display the minimum distance and type name */}
-        {!minDistance && <NotFound />}
+     
 
         {minDistance !== null && searchValue &&  (
           <section className="flex  gap-2 sm:gap-5 flex-wrap justify-center">
             {stationList &&
-              stationList.filter((item:any) => {
+              stationList.slice(0, 6).filter((item:any) => {
                 if(filterbyType === 0) return item
                 return item.type === filterbyType
             }).map((item, index: number) => (
@@ -230,6 +232,11 @@ const YourComponent = () => {
               ))}
           </section>
         )}
+
+            {/* {!minDistance && !searchValue && (
+              <NotFound title="ระบุสถานที่ของคุณ" description="คุณสามารถค้นหาสถานที่ที่คุณต้องการทราบว่าใกล้ระไฟฟ้าอะไร"/>
+            )} */}
+       
       </section>
     </>
   );

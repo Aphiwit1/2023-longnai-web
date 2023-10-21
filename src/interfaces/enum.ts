@@ -13,4 +13,5 @@ export enum RapidTransitType {
     "GOLD" = 6,
     "DARK_RED" = 7,
     "LIGHT_RED" = 8,
+    "YELLO" = 9,
   }

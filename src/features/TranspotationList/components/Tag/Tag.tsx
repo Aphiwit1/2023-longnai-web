@@ -31,6 +31,8 @@ export const Tag = ({ detail, index }: any) => {
                 return "bg-[#F60723]"
             case RapidTransitThemeType.LIGHT_RED:
                 return "bg-[#D76A6C]"
+          case RapidTransitThemeType.YELLO :
+                    return "bg-yellow-400"
         }
     }
 
@@ -52,6 +54,8 @@ export const Tag = ({ detail, index }: any) => {
                 return "border-[#F60723] text-[#F60723] border-[#F60723]"
             case RapidTransitThemeType.LIGHT_RED:
                 return "border-[#D76A6C] text-[#D76A6C] border-[#D76A6C]"
+            case RapidTransitThemeType.YELLO :
+                    return "border-yellow-400 text-yellow-400"
         }
     }
 
